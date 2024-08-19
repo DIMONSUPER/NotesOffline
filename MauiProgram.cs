@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using NotesOffline.Extensions;
 
 namespace NotesOffline;
 public static class MauiProgram
@@ -17,6 +18,9 @@ public static class MauiProgram
 #if DEBUG
 		builder.Logging.AddDebug();
 #endif
+
+        builder.RegisterViewsAndViewModels();
+        builder.RegisterDbContext();
 
         return builder.Build();
     }
