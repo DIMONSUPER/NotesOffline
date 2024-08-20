@@ -1,0 +1,6 @@
+@NotesOfflien.Api_HostAddress = http://localhost:5207
+
+GET {{NotesOfflien.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

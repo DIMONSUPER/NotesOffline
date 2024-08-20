@@ -1,0 +1,15 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace NotesOffline.DataAccess.Entities;
+public class Note
+{
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Key]
+    public Guid Id { get; set; }
+    public string? Title { get; set; }
+    public string? Content { get; set; }
+    public bool IsDeleted { get; set; }
+    public DateTime? CreatedAt { get; set; }
+    public DateTime? EditedAt { get; set; }
+}
