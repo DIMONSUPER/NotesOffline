@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NotesOffline.ViewModels"
+             x:Class="NotesOffline.Views.CreateEditNotePage"
+             x:DataType="vm:CreateEditNoteViewModel"
+             Title="{Binding Title}"
+             Shell.PresentationMode="ModalAnimated">
+
+    <VerticalStackLayout Spacing="10" Margin="20">
+        <Grid ColumnDefinitions="*,*,*">
+            <Button 
+                Text="Back"
+                Command="{Binding BackButtonTappedCommand}"
+                HorizontalOptions="Start"
+                TextColor="White"
+                Padding="0"
+                VerticalOptions="Start"
+                BackgroundColor="Transparent"
+                HeightRequest="30"/>
+
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title}"
+                HorizontalOptions="Center"
+                VerticalTextAlignment="Start"
+                FontSize="18"
+                FontAttributes="Bold"
+                Margin="0,0,0,20"
+                HeightRequest="40"/>
+        </Grid>
+
+        <Entry Text="{Binding SelectedNote.Title}" MaxLength="20" Placeholder="Note title"/>
+
+        <Editor Text="{Binding SelectedNote.Content}" MaxLength="120" Placeholder="Note content"/>
+
+        <Button Text="Save" Command="{Binding SaveButtonTappedCommand}" Margin="0,20"/>
+
+        <Button Text="Remove" Command="{Binding DeleteButtonTappedCommand}">
+            <Button.Triggers>
+                <DataTrigger
+                    Binding="{Binding SelectedNote.Id}"
+                    TargetType="Button"
+                    Value="0">
+                    <Setter Property="IsVisible" Value="False"/>
+                </DataTrigger>
+            </Button.Triggers>
+        </Button>
+    </VerticalStackLayout>
+</ContentPage>

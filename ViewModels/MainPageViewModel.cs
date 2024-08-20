@@ -1,31 +1,58 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using NotesOffline.Data;
 using NotesOffline.Models;
+using NotesOffline.Services;
 
 namespace NotesOffline.ViewModels;
 
 public partial class MainPageViewModel : BaseViewModel
 {
-    private readonly ApplicationDbContext _context;
+    private readonly INoteService _noteService;
 
-    public MainPageViewModel(ApplicationDbContext context)
+    public MainPageViewModel(INoteService noteService)
     {
-        _context = context;
+        _noteService = noteService;
     }
 
     [ObservableProperty]
-    private int count;
+    private ObservableCollection<Note> notes;
+
+    [ObservableProperty]
+    private bool isLoading;
+
+    public override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        await UpdateNotesAsync();
+    }
 
     [RelayCommand]
-    public async Task Increase()
+    public Task ItemTapped(Note selectedNote)
     {
-        var notes = _context.Set<Note>().ToList();
-
-        if (notes.Count < 1) 
+        var parameters = new Dictionary<string, object>
         {
-            await _context.AddAsync(new Note { Title ="New note", Content = "Some content here", IsSynced = false });
-            await _context.SaveChangesAsync();
-        }
+            {nameof(CreateEditNoteViewModel.SelectedNote), selectedNote}
+        };
+
+        return Shell.Current.GoToAsync(Constants.NavigationPages.CREATE_EDIT_NOTE_PAGE, parameters:parameters, animate: true);
+    }
+
+    [RelayCommand]
+    public Task AddNoteButtonTapped()
+    {
+        return Shell.Current.GoToAsync(Constants.NavigationPages.CREATE_EDIT_NOTE_PAGE, animate: true);
+    }
+
+    private async Task UpdateNotesAsync()
+    {
+        IsLoading = true;
+
+        var allNotes = await _noteService.GetAllNotesAsync();
+
+        Notes = new(allNotes);
+
+        IsLoading = false;
     }
 }

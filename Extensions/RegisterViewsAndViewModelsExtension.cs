@@ -1,4 +1,5 @@
 ﻿using NotesOffline.ViewModels;
+using NotesOffline.Views;
 
 namespace NotesOffline.Extensions;
 public static class RegisterViewsAndViewModelsExtension
@@ -7,6 +8,9 @@ public static class RegisterViewsAndViewModelsExtension
     {
         builder.Services.AddSingleton<MainPage>();
         builder.Services.AddSingleton<MainPageViewModel>();
+
+        builder.Services.AddTransient<CreateEditNotePage>();
+        builder.Services.AddTransient<CreateEditNoteViewModel>();
 
         return builder;
     }

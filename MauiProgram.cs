@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CommunityToolkit.Maui;
+using Microsoft.Extensions.Logging;
 using NotesOffline.Extensions;
 
 namespace NotesOffline;
@@ -9,6 +10,7 @@ public static class MauiProgram
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
+            .UseMauiCommunityToolkit()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -19,6 +21,7 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
+        builder.RegisterServices();
         builder.RegisterViewsAndViewModels();
         builder.RegisterDbContext();
 
