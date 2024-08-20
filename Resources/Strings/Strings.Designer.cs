@@ -79,11 +79,29 @@ namespace NotesOffline.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error during deletion.
+        /// </summary>
+        internal static string ErrorDuringDeletion {
+            get {
+                return ResourceManager.GetString("ErrorDuringDeletion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error during saving.
         /// </summary>
         internal static string ErrorDuringSaving {
             get {
                 return ResourceManager.GetString("ErrorDuringSaving", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something went wrong during note deletion.
+        /// </summary>
+        internal static string NoteDeleteFailed {
+            get {
+                return ResourceManager.GetString("NoteDeleteFailed", resourceCulture);
             }
         }
         

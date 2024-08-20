@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NotesOffline.Models;
@@ -13,6 +14,10 @@ public partial class MainPageViewModel : BaseViewModel
     public MainPageViewModel(INoteService noteService)
     {
         _noteService = noteService;
+
+        Connectivity.ConnectivityChanged += OnConnectionChanged;
+
+        IsConnected = Connectivity.NetworkAccess is NetworkAccess.Internet;
     }
 
     [ObservableProperty]
@@ -20,6 +25,9 @@ public partial class MainPageViewModel : BaseViewModel
 
     [ObservableProperty]
     private bool isLoading;
+
+    [ObservableProperty]
+    private bool isConnected;
 
     public override async void OnAppearing()
     {
@@ -49,10 +57,27 @@ public partial class MainPageViewModel : BaseViewModel
     {
         IsLoading = true;
 
+        await _noteService.SyncWithServerAsync();
+
         var allNotes = await _noteService.GetAllNotesAsync();
 
         Notes = new(allNotes);
 
         IsLoading = false;
+    }
+
+    public async void OnConnectionChanged(object? sender, ConnectivityChangedEventArgs e)
+    {
+        var newIsConnected = e.NetworkAccess is NetworkAccess.Internet;
+
+        if (newIsConnected != IsConnected)
+        {
+            IsConnected = newIsConnected;
+
+            if (IsConnected)
+            {
+                await UpdateNotesAsync();
+            }
+        }
     }
 }

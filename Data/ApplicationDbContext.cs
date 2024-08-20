@@ -5,7 +5,8 @@ namespace NotesOffline.Data;
 
 public class ApplicationDbContext : DbContext
 {
-    public DbSet<Note> Notes { get; set; }
+    public required DbSet<Note> Notes { get; set; }
+    public required DbSet<PendingAction> Actions { get; set; }
 
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {

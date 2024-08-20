@@ -37,7 +37,7 @@ public partial class CreateEditNoteViewModel : BaseViewModel, IQueryAttributable
     {
         Note? result;
 
-        if (SelectedNote.Id is 0)
+        if (SelectedNote.Id == Guid.Empty)
         {
             result = await _noteService.CreateNoteAsync(SelectedNote);
         }
@@ -59,16 +59,16 @@ public partial class CreateEditNoteViewModel : BaseViewModel, IQueryAttributable
     [RelayCommand]
     public async Task DeleteButtonTapped()
     {
-        if (SelectedNote.Id is 0)
+        var result = await _noteService.DeleteNoteAsync(SelectedNote);
+
+        if (result)
         {
-            await _noteService.CreateNoteAsync(SelectedNote);
+            await Shell.Current.GoToAsync("..");
         }
         else
         {
-            await _noteService.UpdateNoteAsync(SelectedNote);
+            await Shell.Current.DisplayAlert(Strings.ErrorDuringDeletion, Strings.NoteDeleteFailed, Strings.Ok);
         }
-
-        await Shell.Current.GoToAsync("..");
     }
 
     [RelayCommand]
@@ -89,6 +89,6 @@ public partial class CreateEditNoteViewModel : BaseViewModel, IQueryAttributable
 
     private void UpdateTitle()
     {
-        Title = SelectedNote.Id is 0 ? Strings.CreateNote : Strings.EditNote;
+        Title = SelectedNote.Id == Guid.Empty ? Strings.CreateNote : Strings.EditNote;
     }
 }

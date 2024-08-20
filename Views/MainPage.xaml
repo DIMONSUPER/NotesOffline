@@ -47,16 +47,26 @@
         </DataTemplate>
     </ContentPage.Resources>
 
-    <Grid>
+    <Frame Padding="0" CornerRadius="0" BackgroundColor="Transparent" IsClippedToBounds="True">
+        <Frame.Triggers>
+            <DataTrigger 
+                Binding="{Binding IsConnected}"
+                TargetType="Frame"
+                Value="False">
+                <Setter Property="BorderColor" Value="Orange"></Setter>
+            </DataTrigger>
+        </Frame.Triggers>
+        <Grid>
 
-        <ActivityIndicator IsRunning="{Binding IsLoading}" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <ActivityIndicator IsRunning="{Binding IsLoading}" VerticalOptions="Center" HorizontalOptions="Center"/>
 
-        <CollectionView
+            <CollectionView
             IsVisible="{Binding IsLoading, Converter={x:StaticResource InvertedBoolConverter}}"
             ItemsSource="{Binding Notes}"
             ItemTemplate="{x:StaticResource NoteTemplate}"
             SelectionMode="None"/>
 
-    </Grid>
+        </Grid>
+    </Frame>
 
 </ContentPage>

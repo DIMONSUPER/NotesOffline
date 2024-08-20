@@ -132,4 +132,10 @@
   <data name="ErrorDuringSaving" xml:space="preserve">
     <value>Error during saving</value>
   </data>
+  <data name="ErrorDuringDeletion" xml:space="preserve">
+    <value>Error during deletion</value>
+  </data>
+  <data name="NoteDeleteFailed" xml:space="preserve">
+    <value>Something went wrong during note deletion</value>
+  </data>
 </root>

@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35208.52
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotesOffline", "NotesOffline.csproj", "{F9D3B078-19E4-4AE5-8E7A-54104CF1DF3C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotesOffline", "NotesOffline.csproj", "{F9D3B078-19E4-4AE5-8E7A-54104CF1DF3C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotesOffline.Api", "..\NotesOfflien.Api\NotesOffline.Api.csproj", "{66060092-C9A5-461A-AD58-52DF97A09AC6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotesOffline.DataAccess", "..\NotesOffline.DataAccess\NotesOffline.DataAccess.csproj", "{0C0EFFCD-6428-4097-A537-C3428E90DE28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +21,14 @@ Global
 		{F9D3B078-19E4-4AE5-8E7A-54104CF1DF3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9D3B078-19E4-4AE5-8E7A-54104CF1DF3C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F9D3B078-19E4-4AE5-8E7A-54104CF1DF3C}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{66060092-C9A5-461A-AD58-52DF97A09AC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{66060092-C9A5-461A-AD58-52DF97A09AC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{66060092-C9A5-461A-AD58-52DF97A09AC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{66060092-C9A5-461A-AD58-52DF97A09AC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C0EFFCD-6428-4097-A537-C3428E90DE28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C0EFFCD-6428-4097-A537-C3428E90DE28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C0EFFCD-6428-4097-A537-C3428E90DE28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C0EFFCD-6428-4097-A537-C3428E90DE28}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
