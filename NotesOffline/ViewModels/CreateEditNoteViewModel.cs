@@ -1,10 +1,9 @@
-﻿using System.ComponentModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using NotesOffline.Models;
 using NotesOffline.Models.Entities;
 using NotesOffline.Resources.Strings;
 using NotesOffline.Services;
+using System.ComponentModel;
 
 namespace NotesOffline.ViewModels;
 

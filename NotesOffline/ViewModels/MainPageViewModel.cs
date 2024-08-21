@@ -1,10 +1,10 @@
-﻿using System.Collections.ObjectModel;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using NotesOffline.Models.Entities;
 using NotesOffline.Models.Messages;
 using NotesOffline.Services;
+using System.Collections.ObjectModel;
 
 namespace NotesOffline.ViewModels;
 
@@ -50,7 +50,7 @@ public partial class MainPageViewModel : BaseViewModel, IRecipient<PendingAction
             {nameof(CreateEditNoteViewModel.SelectedNote), selectedNote}
         };
 
-        return Shell.Current.GoToAsync(Constants.NavigationPages.CREATE_EDIT_NOTE_PAGE, parameters:parameters, animate: true);
+        return Shell.Current.GoToAsync(Constants.NavigationPages.CREATE_EDIT_NOTE_PAGE, parameters: parameters, animate: true);
     }
 
     [RelayCommand]

@@ -1,10 +1,7 @@
-﻿using CommunityToolkit.Mvvm.Messaging;
-using EFCore.BulkExtensions;
-using NotesOffline.Data;
-using NotesOffline.Models;
+﻿using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
+using NotesOffline.Data;
 using NotesOffline.Models.Entities;
-using NotesOffline.Models.Messages;
 
 namespace NotesOffline.Services;
 
@@ -129,7 +126,7 @@ public class NoteService : INoteService
         try
         {
             var note = await _context.Set<Note>().AsTracking().FirstAsync(x => x.Id == noteToDelete.Id, cancellationToken);
-            
+
             if (onlineNote is null)
             {
                 await _actionService.CreateNewActionForNoteAsync(note, ActionType.Delete, cancellationToken);
@@ -193,24 +190,24 @@ public class NoteService : INoteService
             switch (action.Action)
             {
                 case ActionType.Delete:
-                {
-                    note = await _restService.DeleteAsync<Note>($"{NOTES_API_URL}?noteId={action.NoteId}");
-                    break;
-                }
+                    {
+                        note = await _restService.DeleteAsync<Note>($"{NOTES_API_URL}?noteId={action.NoteId}");
+                        break;
+                    }
                 case ActionType.Create:
-                {
-                    note = await _context.Set<Note>().AsNoTracking().FirstAsync(x => x.Id == action.NoteId, cancellationToken);
+                    {
+                        note = await _context.Set<Note>().AsNoTracking().FirstAsync(x => x.Id == action.NoteId, cancellationToken);
 
-                    await _restService.PostAsync<Note>(NOTES_API_URL, note);
-                    break;
-                }
+                        await _restService.PostAsync<Note>(NOTES_API_URL, note);
+                        break;
+                    }
                 case ActionType.Update:
-                {
-                    note = await _context.Set<Note>().AsNoTracking().FirstAsync(x => x.Id == action.NoteId, cancellationToken); 
-                    
-                    await _restService.PutAsync<Note>(NOTES_API_URL, note);
-                    break;
-                }
+                    {
+                        note = await _context.Set<Note>().AsNoTracking().FirstAsync(x => x.Id == action.NoteId, cancellationToken);
+
+                        await _restService.PutAsync<Note>(NOTES_API_URL, note);
+                        break;
+                    }
             }
 
             await _actionService.RemoveActionAsync(action.Id, cancellationToken);

@@ -1,9 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NotesOffline.Models.Entities;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.EntityFrameworkCore;
 using NotesOffline.Data;
-using CommunityToolkit.Mvvm.Messaging;
+using NotesOffline.Models.Entities;
 using NotesOffline.Models.Messages;
-using NotesOffline.ViewModels;
 
 namespace NotesOffline.Services;
 
