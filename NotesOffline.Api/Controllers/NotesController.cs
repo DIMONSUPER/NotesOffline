@@ -57,14 +57,7 @@ public class NotesController : ControllerBase
         entry.Entity.CreatedAt = entry.Entity.CreatedAt?.ToUniversalTime() ?? DateTime.UtcNow;
         entry.Entity.EditedAt = entry.Entity.EditedAt?.ToUniversalTime();
 
-        try
-        {
-            await _context.SaveChangesAsync(cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex);
-        }
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Ok(entry.Entity);
     }

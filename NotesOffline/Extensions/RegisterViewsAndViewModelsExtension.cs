@@ -12,6 +12,9 @@ public static class RegisterViewsAndViewModelsExtension
         builder.Services.AddTransient<CreateEditNotePage>();
         builder.Services.AddTransient<CreateEditNoteViewModel>();
 
+        builder.Services.AddTransient<MessagesPage>();
+        builder.Services.AddTransient<MessagesViewModel>();
+
         return builder;
     }
 }

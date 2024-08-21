@@ -2,25 +2,27 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:NotesOffline.ViewModels"
-             xmlns:models="clr-namespace:NotesOffline.Models"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:entities="clr-namespace:NotesOffline.Models.Entities"
              x:Class="NotesOffline.Views.MainPage"
              x:DataType="vm:MainPageViewModel"
-             Appearing="OnAppearing">
-
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add note" Command="{Binding AddNoteButtonTappedCommand}"/>
-    </ContentPage.ToolbarItems>
+             Appearing="OnAppearing"
+             Shell.NavBarIsVisible="False">
 
     <ContentPage.Resources>
         <ResourceDictionary>
+            <x:String x:Key="IconBell">&#xf0f3;</x:String>
+
             <Style x:Key="LabelStyle" TargetType="Label">
                 <Setter Property="FontSize" Value="16"/>
             </Style>
-            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
+
+            <toolkit:IntToBoolConverter x:Key="IntToBoolConverter"/>
         </ResourceDictionary>
 
-        <DataTemplate x:Key="NoteTemplate" x:DataType="models:Note">
+        <DataTemplate x:Key="NoteTemplate" x:DataType="entities:Note">
             <Grid RowDefinitions="Auto, 1">
                 <Grid.GestureRecognizers>
                     <TapGestureRecognizer 
@@ -42,31 +44,85 @@
                         Style="{x:StaticResource LabelStyle}"/>
                 </Grid>
 
-                <BoxView Grid.Row="1" BackgroundColor="White" Color="White" HorizontalOptions="FillAndExpand" Height="1"/>
+                <BoxView Grid.Row="1" BackgroundColor="White" Color="White" HorizontalOptions="FillAndExpand" HeightRequest="1"/>
             </Grid>
         </DataTemplate>
     </ContentPage.Resources>
 
-    <Frame Padding="0" CornerRadius="0" BackgroundColor="Transparent" IsClippedToBounds="True">
-        <Frame.Triggers>
-            <DataTrigger 
-                Binding="{Binding IsConnected}"
-                TargetType="Frame"
-                Value="False">
-                <Setter Property="BorderColor" Value="Orange"></Setter>
-            </DataTrigger>
-        </Frame.Triggers>
-        <Grid>
+    <Grid RowDefinitions="Auto, *" RowSpacing="20" Padding="0,15, 0, 20">
+        <Grid ColumnDefinitions="*, Auto" VerticalOptions="Center" Padding="20,0">
+            <Label Text="Home" VerticalTextAlignment="Center" FontSize="20" TextColor="{x:StaticResource SecondaryDarkText}"/>
 
-            <ActivityIndicator IsRunning="{Binding IsLoading}" VerticalOptions="Center" HorizontalOptions="Center"/>
+            <HorizontalStackLayout Grid.Column="1" Spacing="15">
+                <Grid>
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding BellIconTappedCommand}"/>
+                    </Grid.GestureRecognizers>
 
-            <CollectionView
-            IsVisible="{Binding IsLoading, Converter={x:StaticResource InvertedBoolConverter}}"
-            ItemsSource="{Binding Notes}"
-            ItemTemplate="{x:StaticResource NoteTemplate}"
-            SelectionMode="None"/>
+                    <Label 
+                        FontFamily="FontAwesome"
+                        FontSize="24"
+                        VerticalTextAlignment="Center"
+                        Text="{x:StaticResource IconBell}"
+                        TextColor="{x:StaticResource SecondaryDarkText}"/>
 
+                    <Grid 
+                        WidthRequest="20"
+                        HeightRequest="20"
+                        VerticalOptions="Start"
+                        HorizontalOptions="End"
+                        Margin="10,0,0,20"
+                        IsVisible="{Binding MessagesCount, Converter={x:StaticResource IntToBoolConverter}}">
+                        
+                        <Ellipse Fill="Red"/>
+
+                        <Label 
+                            Text="{Binding MessagesCount}"
+                            VerticalTextAlignment="Center" 
+                            HorizontalTextAlignment="Center"
+                            FontSize="10"
+                            TextColor="White"/>
+                    </Grid>
+                </Grid>
+
+                <Label Text="Add note" FontSize="16" TextColor="{x:StaticResource SecondaryDarkText}" VerticalTextAlignment="Center">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding AddNoteButtonTappedCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+            </HorizontalStackLayout>
         </Grid>
-    </Frame>
+
+        <Frame Grid.Row="1" Padding="0" CornerRadius="0" BackgroundColor="Transparent" IsClippedToBounds="True">
+            <Frame.Triggers>
+                <DataTrigger 
+                    Binding="{Binding IsConnected}"
+                    TargetType="Frame"
+                    Value="False">
+                    <Setter Property="BorderColor" Value="Orange"></Setter>
+                </DataTrigger>
+            </Frame.Triggers>
+            <Grid>
+
+                <ActivityIndicator IsRunning="{Binding IsLoading}" VerticalOptions="Center" HorizontalOptions="Center"/>
+
+                <CollectionView
+                    IsVisible="{Binding IsLoading, Converter={x:StaticResource InvertedBoolConverter}}"
+                    ItemsSource="{Binding Notes}"
+                    ItemTemplate="{x:StaticResource NoteTemplate}"
+                    SelectionMode="None">
+
+                    <CollectionView.EmptyView>
+                        <Label 
+                            Text="There are no notes yet"
+                            HorizontalTextAlignment="Center"
+                            VerticalTextAlignment="Center"/>
+                    </CollectionView.EmptyView>
+
+                </CollectionView>
+
+            </Grid>
+        </Frame>
+    </Grid>
 
 </ContentPage>

@@ -1,4 +1,4 @@
-﻿namespace NotesOffline.Models;
+﻿namespace NotesOffline.Models.Entities;
 public class Note
 {
     public Guid Id { get; set; }

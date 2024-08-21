@@ -1,7 +1,10 @@
-﻿using EFCore.BulkExtensions;
+﻿using CommunityToolkit.Mvvm.Messaging;
+using EFCore.BulkExtensions;
 using NotesOffline.Data;
 using NotesOffline.Models;
 using Microsoft.EntityFrameworkCore;
+using NotesOffline.Models.Entities;
+using NotesOffline.Models.Messages;
 
 namespace NotesOffline.Services;
 
@@ -20,11 +23,13 @@ public class NoteService : INoteService
 
     private readonly ApplicationDbContext _context;
     private readonly IRestService _restService;
+    private readonly IActionService _actionService;
 
-    public NoteService(ApplicationDbContext context, IRestService restService)
+    public NoteService(ApplicationDbContext context, IRestService restService, IActionService actionService)
     {
         _context = context;
         _restService = restService;
+        _actionService = actionService;
     }
 
     public bool IsConnected => Connectivity.NetworkAccess is NetworkAccess.Internet;
@@ -33,25 +38,12 @@ public class NoteService : INoteService
     {
         IEnumerable<Note> result = [];
 
-        var onlineNotes = await TryGetAllOnlineNotesAsync(cancellationToken);
-
         try
         {
-            var offlineNotes = await _context.Set<Note>()
+            result = await _context.Set<Note>()
                 .OrderByDescending(x => x.CreatedAt)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
-
-            if (onlineNotes is not null)
-            {
-                await _context.BulkInsertOrUpdateAsync(onlineNotes, cancellationToken: cancellationToken);
-
-                result = onlineNotes;
-            }
-            else
-            {
-                result = offlineNotes;
-            }
         }
         catch (Exception ex)
         {
@@ -84,14 +76,7 @@ public class NoteService : INoteService
 
             if (onlineNote is null)
             {
-                var action = new PendingAction
-                {
-                    NoteId = result.Id,
-                    Action = ActionType.Create,
-                    CreatedAt = DateTime.UtcNow,
-                };
-
-                await _context.Set<PendingAction>().AddAsync(action, cancellationToken);
+                await _actionService.CreateNewActionForNoteAsync(result, ActionType.Create, cancellationToken);
             }
 
             await _context.SaveChangesAsync(cancellationToken);
@@ -120,14 +105,7 @@ public class NoteService : INoteService
 
             if (onlineNote is null)
             {
-                var action = new PendingAction
-                {
-                    NoteId = note.Id,
-                    Action = ActionType.Update,
-                    CreatedAt = DateTime.UtcNow,
-                };
-
-                await _context.Set<PendingAction>().AddAsync(action, cancellationToken);
+                await _actionService.CreateNewActionForNoteAsync(note, ActionType.Update, cancellationToken);
             }
 
             await _context.SaveChangesAsync(cancellationToken);
@@ -154,14 +132,7 @@ public class NoteService : INoteService
             
             if (onlineNote is null)
             {
-                var pendingAction = new PendingAction
-                {
-                    NoteId = note.Id,
-                    Action = ActionType.Delete,
-                    CreatedAt = DateTime.UtcNow,
-                };
-
-                await _context.Set<PendingAction>().AddAsync(pendingAction, cancellationToken);
+                await _actionService.CreateNewActionForNoteAsync(note, ActionType.Delete, cancellationToken);
             }
 
             _context.Set<Note>().Remove(note);
@@ -188,14 +159,18 @@ public class NoteService : INoteService
 
         try
         {
-            var pendingActions = await _context.Set<PendingAction>()
-                .OrderByDescending(x => x.CreatedAt)
-                .AsNoTracking()
-                .ToListAsync(cancellationToken);
+            var pendingActions = await _actionService.GetAllActionsAsync(cancellationToken);
 
             foreach (var action in pendingActions)
             {
                 await TrySyncNoteAsync(action, cancellationToken);
+            }
+
+            var onlineNotes = await TryGetAllOnlineNotesAsync(cancellationToken);
+
+            if (onlineNotes is not null)
+            {
+                await _context.BulkInsertOrUpdateAsync(onlineNotes, cancellationToken: cancellationToken);
             }
         }
         catch (Exception ex)
@@ -213,30 +188,32 @@ public class NoteService : INoteService
 
         try
         {
+            Note? note = null;
+
             switch (action.Action)
             {
                 case ActionType.Delete:
                 {
-                    var note = await _restService.DeleteAsync<Note>($"{NOTES_API_URL}?noteId={action.NoteId}");
+                    note = await _restService.DeleteAsync<Note>($"{NOTES_API_URL}?noteId={action.NoteId}");
                     break;
                 }
                 case ActionType.Create:
                 {
-                    var note = await _context.Set<Note>().AsNoTracking().FirstAsync(x => x.Id == action.NoteId, cancellationToken);
+                    note = await _context.Set<Note>().AsNoTracking().FirstAsync(x => x.Id == action.NoteId, cancellationToken);
 
                     await _restService.PostAsync<Note>(NOTES_API_URL, note);
                     break;
                 }
                 case ActionType.Update:
                 {
-                    var note = await _context.Set<Note>().AsNoTracking().FirstAsync(x => x.Id == action.NoteId, cancellationToken); 
+                    note = await _context.Set<Note>().AsNoTracking().FirstAsync(x => x.Id == action.NoteId, cancellationToken); 
                     
                     await _restService.PutAsync<Note>(NOTES_API_URL, note);
                     break;
                 }
             }
 
-            _context.Set<PendingAction>().Remove(action);
+            await _actionService.RemoveActionAsync(action.Id, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
         }

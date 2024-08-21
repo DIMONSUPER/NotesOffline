@@ -6,5 +6,6 @@ public static class Constants
     public static class NavigationPages
     {
         public const string CREATE_EDIT_NOTE_PAGE = "createeditnotepage";
+        public const string MESSAGES_PAGE = "messagespage";
     }
 }

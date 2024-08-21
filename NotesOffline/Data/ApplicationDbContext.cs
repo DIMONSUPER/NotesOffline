@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NotesOffline.Models;
+using NotesOffline.Models.Entities;
 
 namespace NotesOffline.Data;
 

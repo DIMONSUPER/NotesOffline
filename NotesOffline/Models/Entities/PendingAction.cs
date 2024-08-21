@@ -1,4 +1,4 @@
-﻿namespace NotesOffline.Models;
+﻿namespace NotesOffline.Models.Entities;
 public class PendingAction
 {
     public int Id { get; set; }

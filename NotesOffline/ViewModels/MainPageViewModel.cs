@@ -1,23 +1,24 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using NotesOffline.Models;
+using CommunityToolkit.Mvvm.Messaging;
+using NotesOffline.Models.Entities;
+using NotesOffline.Models.Messages;
 using NotesOffline.Services;
 
 namespace NotesOffline.ViewModels;
 
-public partial class MainPageViewModel : BaseViewModel
+public partial class MainPageViewModel : BaseViewModel, IRecipient<PendingActionMessageChanged>
 {
     private readonly INoteService _noteService;
+    private readonly IActionService _actionService;
 
-    public MainPageViewModel(INoteService noteService)
+    public MainPageViewModel(INoteService noteService, IActionService actionService)
     {
         _noteService = noteService;
+        _actionService = actionService;
 
-        Connectivity.ConnectivityChanged += OnConnectionChanged;
-
-        IsConnected = Connectivity.NetworkAccess is NetworkAccess.Internet;
+        Initialize();
     }
 
     [ObservableProperty]
@@ -29,11 +30,16 @@ public partial class MainPageViewModel : BaseViewModel
     [ObservableProperty]
     private bool isConnected;
 
+    [ObservableProperty]
+    private int messagesCount;
+
     public override async void OnAppearing()
     {
         base.OnAppearing();
 
         await UpdateNotesAsync();
+
+        MessagesCount = await _actionService.GetActionsCountAsync();
     }
 
     [RelayCommand]
@@ -53,6 +59,23 @@ public partial class MainPageViewModel : BaseViewModel
         return Shell.Current.GoToAsync(Constants.NavigationPages.CREATE_EDIT_NOTE_PAGE, animate: true);
     }
 
+    [RelayCommand]
+    public Task BellIconTapped()
+    {
+        return Shell.Current.GoToAsync(Constants.NavigationPages.MESSAGES_PAGE, animate: true);
+    }
+
+    private async void Initialize()
+    {
+        Connectivity.ConnectivityChanged += OnConnectionChanged;
+
+        IsConnected = Connectivity.NetworkAccess is NetworkAccess.Internet;
+
+        WeakReferenceMessenger.Default.Register(this);
+
+        MessagesCount = await _actionService.GetActionsCountAsync();
+    }
+
     private async Task UpdateNotesAsync()
     {
         IsLoading = true;
@@ -66,7 +89,7 @@ public partial class MainPageViewModel : BaseViewModel
         IsLoading = false;
     }
 
-    public async void OnConnectionChanged(object? sender, ConnectivityChangedEventArgs e)
+    private async void OnConnectionChanged(object? sender, ConnectivityChangedEventArgs e)
     {
         var newIsConnected = e.NetworkAccess is NetworkAccess.Internet;
 
@@ -79,5 +102,10 @@ public partial class MainPageViewModel : BaseViewModel
                 await UpdateNotesAsync();
             }
         }
+    }
+
+    public async void Receive(PendingActionMessageChanged message)
+    {
+        MessagesCount = await _actionService.GetActionsCountAsync();
     }
 }

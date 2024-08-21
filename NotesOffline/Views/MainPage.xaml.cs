@@ -4,7 +4,7 @@ namespace NotesOffline.Views;
 
 public partial class MainPage : ContentPage
 {
-    private readonly MainPageViewModel _viewModel;
+    private readonly BaseViewModel _viewModel;
     public MainPage(MainPageViewModel mainPageViewModel)
     {
         BindingContext = mainPageViewModel;

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:NotesOffline.ViewModels"
+             xmlns:entities="clr-namespace:NotesOffline.Models.Entities"
+             x:Class="NotesOffline.Views.MessagesPage"
+             Title="Messages"
+             Shell.PresentationMode="ModalAnimated"
+             x:DataType="vm:MessagesViewModel"
+             Appearing="OnAppearing">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="LabelStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="16"/>
+            </Style>
+        </ResourceDictionary>
+
+        <DataTemplate x:Key="MessageTemplate" x:DataType="entities:PendingAction">
+            <Grid RowDefinitions="Auto, 1" Padding="0,0,0,50">
+
+                <VerticalStackLayout Spacing="5">
+                    <Label 
+                        Text="{Binding NoteId}"
+                        MaxLines="1"
+                        LineBreakMode="TailTruncation"
+                        Style="{x:StaticResource LabelStyle}"/>
+
+                    <Label 
+                        Text="{Binding CreatedAt}"
+                        MaxLines="1"
+                        LineBreakMode="TailTruncation"
+                        Style="{x:StaticResource LabelStyle}"/>
+
+                    <Label 
+                        Text="{Binding Action}"
+                        FontAttributes="Bold"
+                        Style="{x:StaticResource LabelStyle}"/>
+
+                </VerticalStackLayout>
+
+                <BoxView Grid.Row="1" BackgroundColor="White" Color="White" HorizontalOptions="FillAndExpand" HeightRequest="1" Margin="0,20,0,0"/>
+            </Grid>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <VerticalStackLayout Spacing="10" Margin="20">
+
+        <Grid ColumnDefinitions="*,*,*">
+            <Button 
+                Text="Back"
+                Command="{Binding BackButtonTappedCommand}"
+                HorizontalOptions="Start"
+                TextColor="White"
+                Padding="0"
+                VerticalOptions="Start"
+                BackgroundColor="Transparent"
+                HeightRequest="30"/>
+
+            <Label
+                Grid.Column="1"
+                Text="{Binding Title}"
+                HorizontalOptions="Center"
+                VerticalTextAlignment="Start"
+                FontSize="18"
+                FontAttributes="Bold"
+                Margin="0,0,0,20"
+                HeightRequest="40"/>
+        </Grid>
+
+        <CollectionView
+            ItemsSource="{Binding Messages}"
+            ItemTemplate="{x:StaticResource MessageTemplate}"
+            SelectionMode="None">
+
+            <CollectionView.EmptyView>
+                <Label 
+                    Text="There are no messages yet"
+                    HorizontalTextAlignment="Center"
+                    VerticalTextAlignment="Center"/>
+            </CollectionView.EmptyView>
+
+        </CollectionView>
+
+    </VerticalStackLayout>
+
+</ContentPage>
